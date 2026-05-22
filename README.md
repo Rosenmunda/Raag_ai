@@ -1,4 +1,4 @@
-# Raag AI - Fitness Trainer Platform
+# Kasrat AI - Fitness Trainer Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
