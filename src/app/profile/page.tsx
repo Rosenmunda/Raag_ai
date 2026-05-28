@@ -1,9 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProfileHeader from "@/components/ProfileHeader";
 import NoFitnessPlan from "@/components/NoFitnessPlan";
 import CornerElements from "@/components/CornerElements";
@@ -21,8 +19,21 @@ const ProfilePage = () => {
   const { user } = useUser();
   const userId = user?.id as string;
 
-  const allPlans = useQuery(api.plans.getUserPlans, { userId });
+  const [allPlans, setAllPlans] = useState<any[] | null>(null);
   const [selectedPlanId, setSelectedPlanId] = useState<null | string>(null);
+
+  useEffect(() => {
+    if (userId) {
+      fetch(`/api/plans?userId=${userId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.error) {
+            setAllPlans(data);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [userId]);
 
   const activePlan = allPlans?.find((plan) => plan.isActive);
 
@@ -113,7 +124,7 @@ const ProfilePage = () => {
                     </div>
 
                     <Accordion type="multiple" className="space-y-4">
-                      {currentPlan.workoutPlan.exercises.map((exerciseDay, index) => (
+                      {currentPlan.workoutPlan.exercises.map((exerciseDay: any, index: number) => (
                         <AccordionItem
                           key={index}
                           value={exerciseDay.day}
@@ -130,7 +141,7 @@ const ProfilePage = () => {
 
                           <AccordionContent className="pb-4 px-4">
                             <div className="space-y-3 mt-2">
-                              {exerciseDay.routines.map((routine, routineIndex) => (
+                              {exerciseDay.routines.map((routine: any, routineIndex: number) => (
                                 <div
                                   key={routineIndex}
                                   className="border border-border rounded p-3 bg-background/50"
@@ -177,7 +188,7 @@ const ProfilePage = () => {
                     <div className="h-px w-full bg-border my-4"></div>
 
                     <div className="space-y-4">
-                      {currentPlan.dietPlan.meals.map((meal, index) => (
+                      {currentPlan.dietPlan.meals.map((meal: any, index: number) => (
                         <div
                           key={index}
                           className="border border-border rounded-lg overflow-hidden p-4"
@@ -187,7 +198,7 @@ const ProfilePage = () => {
                             <h4 className="font-mono text-primary">{meal.name}</h4>
                           </div>
                           <ul className="space-y-2">
-                            {meal.foods.map((food, foodIndex) => (
+                            {meal.foods.map((food: string, foodIndex: number) => (
                               <li
                                 key={foodIndex}
                                 className="flex items-center gap-2 text-sm text-muted-foreground"
