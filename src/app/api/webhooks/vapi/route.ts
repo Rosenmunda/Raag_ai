@@ -38,12 +38,6 @@ export async function POST(req: Request) {
   let toolCallId = "unknown";
   try {
     const rawPayload = await req.json();
-    console.log("Raw Payload is here:", rawPayload);
-    
-    // DEBUG: Write payload to file so we can inspect what Vapi is sending
-    try {
-      require('fs').appendFileSync('vapi-payload.log', JSON.stringify(rawPayload, null, 2) + '\n\n');
-    } catch (e) {}
 
     let payload = rawPayload;
     // Handle Vapi's Tool Call format
@@ -59,10 +53,8 @@ export async function POST(req: Request) {
       toolCallId = rawPayload.message.functionCall.id || "unknown";
     }
 
-    console.log("Parsed payload arguments:", payload);
-
-    let {
-      user_id,
+    let user_id = payload.user_id;
+    const {
       age,
       height,
       weight,
@@ -153,8 +145,7 @@ export async function POST(req: Request) {
         cleanText = cleanText.substring(firstBrace, lastBrace + 1);
       }
       workoutPlan = JSON.parse(cleanText);
-    } catch (err) {
-      console.error("Gemini returned invalid JSON for workout plan:", workoutPlanText);
+    } catch {
       throw new Error("Failed to parse AI workout plan");
     }
     workoutPlan = validateWorkoutPlan(workoutPlan);
@@ -209,8 +200,7 @@ export async function POST(req: Request) {
         cleanText = cleanText.substring(firstBrace, lastBrace + 1);
       }
       dietPlan = JSON.parse(cleanText);
-    } catch (err) {
-      console.error("Gemini returned invalid JSON for diet plan:", dietPlanText);
+    } catch {
       throw new Error("Failed to parse AI diet plan");
     }
     dietPlan = validateDietPlan(dietPlan);
